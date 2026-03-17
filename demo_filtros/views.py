@@ -1,7 +1,6 @@
 from django.http import HttpResponse
-
-from django.db.models import Q, F
-from .models import Cliente
+from .models import Cliente, Pedido
+from django.db.models import Q, F, Count, Avg, Sum
 
 # Create your views here.
 
@@ -39,3 +38,27 @@ def demo_filtros(request):
 
 
     return HttpResponse("Revisa la terminal de Django!!")
+
+
+def demo_reportes(request):
+     print(" - - - - Demo 1 - - -- - ")
+     # Total de pedidos por cliente
+     total_pedidos_por_cliente = Cliente.objects.annotate(total_pedidos=Count('pedidos_rel'))
+     for cliente in total_pedidos_por_cliente:
+         print(cliente.nombre, cliente.total_pedidos)
+
+     print(" - - - - Demo 2 - - -- - ")
+     # Promedio de gasto por cliente
+     promedio_de_gasto_cliente = Cliente.objects.annotate(promedio_gasto=Avg('pedidos_rel__total'))
+     for cliente in promedio_de_gasto_cliente:
+         print(cliente.nombre, cliente.promedio_gasto)
+
+     print(" - - - - Demo 3 - - -- - ")
+
+     # Total global de todos los pedidos
+     total_global = Pedido.objects.aggregate(suma_total=Sum('total'))
+
+     print(f"Total global: {total_global}")
+
+
+     return HttpResponse("Revisa la terminal de Django!!")
