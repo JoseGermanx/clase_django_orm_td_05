@@ -62,3 +62,17 @@ def demo_reportes(request):
 
 
      return HttpResponse("Revisa la terminal de Django!!")
+
+
+def demo_raw(request):
+    print("- - - - -Demo raw - - - -")
+    # Clientes activos mayores a 30 años -- raw()
+    consulta_sql = "SELECT id, nombre, edad, activo FROM demo_filtros_cliente WHERE activo = %s AND edad > %s"
+
+    clientes_filtrados = Cliente.objects.raw(consulta_sql, [True, 30])
+
+    for cliente in clientes_filtrados:
+        print(cliente.nombre, cliente.edad, cliente.activo)
+ 
+
+    return HttpResponse("Revisa la termina de django")
