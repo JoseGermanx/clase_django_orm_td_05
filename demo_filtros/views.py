@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from .models import Cliente, Pedido
 from django.db.models import Q, F, Count, Avg, Sum
+from django.db import connection
 
 # Create your views here.
 
@@ -76,3 +77,21 @@ def demo_raw(request):
  
 
     return HttpResponse("Revisa la termina de django")
+
+
+
+def demo_cursor(request):
+    print("- - - - -Demo cursor() - - - -")
+
+    # Consultar el total de clientes activos
+    sql = "SELECT * FROM demo_filtros_cliente WHERE activo = %s"
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql,[True])
+        resultado = cursor.fetchall()
+        # print("Total clientes activos", resultado[0])
+        for cliente in resultado:
+            print(cliente[1], cliente[2], cliente[3])
+    
+
+    return HttpResponse("Revisa la terminal de django")
